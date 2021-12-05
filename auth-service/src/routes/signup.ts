@@ -47,7 +47,7 @@ router.post(
                 id: user.id,
                 email: user.email
             },
-            "mySecretOrPrivateKey"
+            process.env.JWT_KEY!
         )
 
         // Store jwt on the session object
