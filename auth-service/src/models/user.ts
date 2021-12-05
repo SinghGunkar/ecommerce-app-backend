@@ -18,17 +18,30 @@ interface UserDocument extends mongoose.Document {
     password: string
 }
 
-const userSchema = new mongoose.Schema({
-    email: {
-        // Note: type in the line below does not refer to typescript
-        type: String,
-        required: true
+const userSchema = new mongoose.Schema(
+    {
+        email: {
+            // Note: type in the line below does not refer to typescript
+            type: String,
+            required: true
+        },
+        password: {
+            type: String,
+            required: true
+        }
     },
-    password: {
-        type: String,
-        required: true
+    {
+        // standardize userSchema output to allow for multi backend support
+        toJSON: {
+            transform(doc: any, ret: any) {
+                ret.id = ret._id
+                delete ret._id
+                delete ret.password
+                delete ret.__v
+            }
+        }
     }
-})
+)
 
 userSchema.statics.build = (attributes: UserAttributes) => {
     return new User(attributes)
