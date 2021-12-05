@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express"
-import { body, validationResult } from "express-validator"
+import { body } from "express-validator"
 import jwt from "jsonwebtoken"
 
+import { validateRequest } from "../middlewares/validate-requests"
+
 import { User } from "../models/user"
-import { RequestValdationError } from "../errors/request-validation-error"
 import { BadRequestError } from "../errors/bad-request-error"
 
 const router = express.Router()
@@ -23,13 +24,8 @@ router.post(
                 "Password must contain alphanumeric characters only"
             )
     ],
+    validateRequest,
     async (req: Request, res: Response) => {
-        const errors = validationResult(req)
-
-        if (!errors.isEmpty()) {
-            throw new RequestValdationError(errors.array())
-        }
-
         const { email, password } = req.body
 
         const existingUser = await User.findOne({ email })
